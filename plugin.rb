@@ -14,10 +14,11 @@ after_initialize do
   end
 
   # Controlador
-  class ::DiscourseMoodleUsers::MoodleController < ::ApplicationController
+  class ::DiscourseMoodleUsers::MoodleController < ::ApplicationController::Base
+    skip_before_action :verify_authenticity_token
     def users
       unless SiteSetting.dmu_enabled
-        render json: { error: I18n.t("discourse_moodle_users.disabled") }, status: 403
+        render json: { error: "El plugin de usuarios Moodle está deshabilitado." }, status: 403
         return
       end
 
@@ -25,7 +26,7 @@ after_initialize do
       moodle_url = SiteSetting.dmu_moodle_api_url
 
       if token.blank? || moodle_url.blank?
-        render json: { error: I18n.t("discourse_moodle_users.invalid_config") }, status: 400
+        render json: { error: "Token de Moodle y URL no configurados correctamente." }, status: 400
         return
       end
 
@@ -37,7 +38,7 @@ after_initialize do
       response = Net::HTTP.get(URI(url))
       users = JSON.parse(response)['users']
 
-      grouped = users.group_by { |u| u['country'] || I18n.t("discourse_moodle_users.no_country") }
+      grouped = users.group_by { |u| u['country'] || "Sin país" }
       result = grouped.transform_values do |arr|
         arr.map { |u| { firstname: u['firstname'], lastname: u['lastname'], email: u['email'] } }
       end
