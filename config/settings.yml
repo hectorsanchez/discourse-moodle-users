@@ -1,0 +1,23 @@
+# config/settings.yml
+
+enabled:
+  default: true
+  type: "bool"
+  description: "discourse_moodle_users.enabled"
+
+moodle_api_token:
+  default: ""
+  type: "string"
+  minlength: 1
+  maxlength: 255
+  placeholder: "discourse_moodle_users.moodle_api_token"
+  description: "discourse_moodle_users.moodle_api_token"
+
+moodle_api_url:
+  default: ""
+  type: "string"
+  minlength: 1
+  maxlength: 255
+  placeholder: "discourse_moodle_users.moodle_api_url"
+  description: "discourse_moodle_users.moodle_api_url"
+

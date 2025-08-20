@@ -1,0 +1,16 @@
+<!-- assets/javascripts/discourse/templates/admin/moodle_api_settings.html.haml -->
+
+%h2 Moodle API Configuración
+
+%form{action: '#'}
+  .form-group
+    %label{for: "moodle_api_token"} Token de Moodle
+    %input.form-control{type: "text", name: "moodle_api_token", value: @moodle_api_token}
+
+  .form-group
+    %label{for: "moodle_api_url"} URL del servidor Moodle
+    %input.form-control{type: "text", name: "moodle_api_url", value: @moodle_api_url}
+
+  .form-group
+    %button.btn.btn-primary{type: "submit"} Guardar Configuración
+
