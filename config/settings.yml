@@ -1,23 +1,24 @@
 # config/settings.yml
 
-dmu_enabled:
-  default: true
-  type: "bool"
-  description: "Habilitar el plugin de usuarios Moodle"
+plugin:
+  dmu_enabled:
+    default: true
+    type: "bool"
+    description: "Habilitar el plugin de usuarios Moodle"
 
-dmu_moodle_api_token:
-  default: ""
-  type: "string"
-  minlength: 1
-  maxlength: 255
-  placeholder: "Token de autenticación para la API de Moodle"
-  description: "Token de autenticación para la API de Moodle"
+  dmu_moodle_api_token:
+    default: ""
+    type: "string"
+    minlength: 1
+    maxlength: 255
+    placeholder: "Token para la API de Moodle"
+    description: "Introduce el token de autenticación para la API de Moodle"
 
-dmu_moodle_api_url:
-  default: ""
-  type: "string"
-  minlength: 1
-  maxlength: 255
-  placeholder: "URL del servidor Moodle para la API"
-  description: "URL del servidor Moodle para la API"
+  dmu_moodle_api_url:
+    default: ""
+    type: "string"
+    minlength: 1
+    maxlength: 255
+    placeholder: "URL de tu servidor Moodle"
+    description: "Introduce la URL del servidor Moodle para la API"
 
