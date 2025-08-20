@@ -14,7 +14,7 @@ after_initialize do
   end
 
   # Controlador
-  class ::DiscourseMoodleUsers::MoodleController < ::ApplicationController::Base
+  class ::DiscourseMoodleUsers::MoodleController < ::ApplicationController
     skip_before_action :verify_authenticity_token
     def users
       unless SiteSetting.dmu_enabled
