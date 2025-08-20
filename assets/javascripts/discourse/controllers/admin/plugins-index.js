@@ -1,6 +1,6 @@
 export default [
   {
-    route: "adminMoodleApiSettings",
+    route: "adminPluginsMoodleApiSettings",
     label: "Moodle API Settings",
     plugin: true
   }
