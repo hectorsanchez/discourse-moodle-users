@@ -44,11 +44,18 @@ after_initialize do
 
       render json: { users_by_country: result }
     end
+
+    def save_settings
+      SiteSetting.dmu_moodle_api_token = params[:dmu_moodle_api_token]
+      SiteSetting.dmu_moodle_api_url = params[:dmu_moodle_api_url]
+      render json: { success: true }
+    end
   end
 
   # Rutas dentro del Engine
   DiscourseMoodleUsers::Engine.routes.draw do
     get '/users' => 'moodle#users'
+    post '/save_settings' => 'moodle#save_settings'
   end
 
   # Montar el Engine en la app principal
