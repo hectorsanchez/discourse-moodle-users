@@ -1,11 +1,11 @@
 # config/settings.yml
 
-enabled:
+dmu_enabled:
   default: true
   type: "bool"
   description: "discourse_moodle_users.enabled"
 
-moodle_api_token:
+dmu_moodle_api_token:
   default: ""
   type: "string"
   minlength: 1
@@ -13,7 +13,7 @@ moodle_api_token:
   placeholder: "discourse_moodle_users.moodle_api_token"
   description: "discourse_moodle_users.moodle_api_token"
 
-moodle_api_url:
+dmu_moodle_api_url:
   default: ""
   type: "string"
   minlength: 1
