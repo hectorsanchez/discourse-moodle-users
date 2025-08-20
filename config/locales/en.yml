@@ -1,8 +1,0 @@
-en:
-  discourse_moodle_users:
-    disabled: "The Moodle users plugin is disabled."
-    invalid_config: "Moodle token and URL are not properly configured."
-    no_country: "No country"
-    enabled: "Enable Moodle users plugin"
-    moodle_api_token: "Authentication token for Moodle API"
-    moodle_api_url: "Moodle server URL for the API"

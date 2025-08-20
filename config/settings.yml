@@ -3,21 +3,21 @@
 dmu_enabled:
   default: true
   type: "bool"
-  description: "discourse_moodle_users.enabled"
+  description: "Habilitar el plugin de usuarios Moodle"
 
 dmu_moodle_api_token:
   default: ""
   type: "string"
   minlength: 1
   maxlength: 255
-  placeholder: "discourse_moodle_users.moodle_api_token"
-  description: "discourse_moodle_users.moodle_api_token"
+  placeholder: "Token de autenticación para la API de Moodle"
+  description: "Token de autenticación para la API de Moodle"
 
 dmu_moodle_api_url:
   default: ""
   type: "string"
   minlength: 1
   maxlength: 255
-  placeholder: "discourse_moodle_users.moodle_api_url"
-  description: "discourse_moodle_users.moodle_api_url"
+  placeholder: "URL del servidor Moodle para la API"
+  description: "URL del servidor Moodle para la API"
 

@@ -2,17 +2,14 @@
 
 {{moodle-api-settings}}
 
-<h2>{{i18n "discourse_moodle_users.enabled"}}</h2>
-
+<h2>Configuración avanzada de Moodle</h2>
 <div>
-  <label>{{i18n "discourse_moodle_users.moodle_api_token"}}</label>
-  {{input value=dmu_moodle_api_token placeholder=(i18n "discourse_moodle_users.moodle_api_token")}}
+  <label>Token de autenticación para la API de Moodle</label>
+  {{input value=dmu_moodle_api_token placeholder="Token de autenticación para la API de Moodle"}}
 </div>
-
 <div>
-  <label>{{i18n "discourse_moodle_users.moodle_api_url"}}</label>
-  {{input value=dmu_moodle_api_url placeholder=(i18n "discourse_moodle_users.moodle_api_url")}}
+  <label>URL del servidor Moodle para la API</label>
+  {{input value=dmu_moodle_api_url placeholder="URL del servidor Moodle para la API"}}
 </div>
-
-<button class="btn btn-primary" {{action "saveSettings"}}>{{i18n "save"}}</button>
+<button class="btn btn-primary" {{action "saveSettings"}}>Guardar</button>
 
