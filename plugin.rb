@@ -1,5 +1,5 @@
 # name: discourse-moodle-users
-# about: Plugin para importar usuarios de Moodle y agruparlos por país
+# about: Plugin para importar usuarios de Moodle y agruparlos por país. Configuración avanzada en /admin/plugins/moodle_api_settings
 # version: 0.1
 # authors: Héctor Sanchez
 

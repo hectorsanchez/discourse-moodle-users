@@ -2,17 +2,17 @@
 
 {{moodle-api-settings}}
 
-%h2 Moodle API Configuración
+<h2>{{i18n "discourse_moodle_users.enabled"}}</h2>
 
-%form{action: '#'}
-  .form-group
-    %label{for: "moodle_api_token"} Token de Moodle
-    %input.form-control{type: "text", name: "moodle_api_token", value: @moodle_api_token}
+<div>
+  <label>{{i18n "discourse_moodle_users.moodle_api_token"}}</label>
+  {{input value=dmu_moodle_api_token placeholder=(i18n "discourse_moodle_users.moodle_api_token")}}
+</div>
 
-  .form-group
-    %label{for: "moodle_api_url"} URL del servidor Moodle
-    %input.form-control{type: "text", name: "moodle_api_url", value: @moodle_api_url}
+<div>
+  <label>{{i18n "discourse_moodle_users.moodle_api_url"}}</label>
+  {{input value=dmu_moodle_api_url placeholder=(i18n "discourse_moodle_users.moodle_api_url")}}
+</div>
 
-  .form-group
-    %button.btn.btn-primary{type: "submit"} Guardar Configuración
+<button class="btn btn-primary" {{action "saveSettings"}}>{{i18n "save"}}</button>
 
