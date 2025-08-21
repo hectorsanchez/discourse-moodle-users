@@ -448,13 +448,13 @@ function showMoodleUsersInterface() {
   // Insertar estilos CSS en el head
   document.head.appendChild(styleElement);
 
-  // Insertar dentro del contenedor principal de Discourse
-  const mainOutletWrapper = document.querySelector('#main-outlet-wrapper');
-  if (mainOutletWrapper) {
-    // Limpiar el contenido existente
-    mainOutletWrapper.innerHTML = '';
+  // Insertar dentro del contenedor principal de contenido de Discourse
+  const mainOutlet = document.querySelector('#main-outlet');
+  if (mainOutlet) {
+    // Limpiar solo el contenido del área principal, no el sidebar
+    mainOutlet.innerHTML = '';
     // Insertar nuestra interfaz
-    mainOutletWrapper.appendChild(moodleInterface);
+    mainOutlet.appendChild(moodleInterface);
   } else {
     // Fallback si no encuentra el contenedor principal
     const mainContent = document.querySelector('.main-content') || document.querySelector('body');
