@@ -1,20 +1,38 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 
 export default {
-  name: "moodle-users-body",
+  name: "moodle-users-sidebar",
   initialize() {
     withPluginApi("0.8.31", api => {
-      // Detectar cuando estamos en /moodle/users
+      // Agregar enlace al sidebar usando la API correcta de Discourse
+      api.addCommunitySectionLink({
+        name: "moodle-users",
+        route: "discovery.latest", // Ruta temporal, la interceptaremos
+        title: "Ver usuarios de Moodle importados del campus",
+        text: "Moodle Users",
+        icon: "users"
+      });
+
+      // Interceptar el click en el enlace
       api.onPageChange(() => {
+        const moodleLink = document.querySelector('a[data-link-name="moodle-users"]');
+        if (moodleLink && !moodleLink.hasAttribute('data-intercepted')) {
+          moodleLink.setAttribute('data-intercepted', 'true');
+          moodleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Navegar a /moodle/users programáticamente
+            window.history.pushState({}, '', '/moodle/users');
+            
+            // Mostrar la interfaz de usuarios de Moodle
+            showMoodleUsersInterface();
+          });
+        }
+        
+        // Detectar si estamos en /moodle/users
         if (window.location.pathname === "/moodle/users") {
-          // Agregar clase al body para estilos específicos
-          document.body.classList.add('moodle-users-page');
-          
-          // Mostrar la interfaz de usuarios de Moodle
           showMoodleUsersInterface();
-        } else {
-          // Remover clase cuando no estamos en la página
-          document.body.classList.remove('moodle-users-page');
         }
       });
     });
@@ -25,6 +43,12 @@ function showMoodleUsersInterface() {
   // Verificar si ya existe la interfaz
   if (document.querySelector('.moodle-users-interface')) {
     return;
+  }
+
+  // Ocultar el contenido principal de Discourse
+  const mainOutlet = document.querySelector('#main-outlet');
+  if (mainOutlet) {
+    mainOutlet.style.display = 'none';
   }
 
   // Crear la interfaz
@@ -97,10 +121,10 @@ function showMoodleUsersInterface() {
     </div>
   `;
 
-  // Insertar después del header
-  const header = document.querySelector('.header');
-  if (header) {
-    header.parentNode.insertBefore(interface, header.nextSibling);
+  // Insertar después del main content
+  const mainContent = document.querySelector('.main-content') || document.querySelector('body');
+  if (mainContent) {
+    mainContent.appendChild(interface);
   }
 
   // Cargar usuarios automáticamente
@@ -132,13 +156,19 @@ async function loadMoodleUsers() {
 }
 
 function updateStats(data) {
-  document.getElementById('totalUsers').textContent = data.total_users;
-  document.getElementById('totalCountries').textContent = allCountries.length;
-  document.getElementById('lastUpdate').textContent = new Date(data.timestamp).toLocaleString();
+  const totalElement = document.getElementById('totalUsers');
+  const countriesElement = document.getElementById('totalCountries');
+  const updateElement = document.getElementById('lastUpdate');
+  
+  if (totalElement) totalElement.textContent = data.total_users;
+  if (countriesElement) countriesElement.textContent = allCountries.length;
+  if (updateElement) updateElement.textContent = new Date(data.timestamp).toLocaleString();
 }
 
 function populateCountryFilter() {
   const select = document.getElementById('countryFilter');
+  if (!select) return;
+  
   select.innerHTML = '<option value="all">Todos los países</option>';
   
   allCountries.forEach(country => {
@@ -150,8 +180,13 @@ function populateCountryFilter() {
 }
 
 function filterUsers() {
-  const selectedCountry = document.getElementById('countryFilter').value;
-  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const countryFilter = document.getElementById('countryFilter');
+  const searchInput = document.getElementById('searchInput');
+  
+  if (!countryFilter || !searchInput) return;
+  
+  const selectedCountry = countryFilter.value;
+  const searchTerm = searchInput.value.toLowerCase();
   
   let filteredUsers = {};
   
@@ -174,6 +209,7 @@ function filterUsers() {
 
 function displayUsers(users) {
   const content = document.getElementById('usersContent');
+  if (!content) return;
   
   if (Object.keys(users).length === 0) {
     content.innerHTML = `
@@ -226,13 +262,20 @@ function getInitials(firstname, lastname) {
 }
 
 function clearFilters() {
-  document.getElementById('countryFilter').value = 'all';
-  document.getElementById('searchInput').value = '';
+  const countryFilter = document.getElementById('countryFilter');
+  const searchInput = document.getElementById('searchInput');
+  
+  if (countryFilter) countryFilter.value = 'all';
+  if (searchInput) searchInput.value = '';
+  
   filterUsers();
 }
 
 function showError(message) {
-  document.getElementById('usersContent').innerHTML = `
+  const content = document.getElementById('usersContent');
+  if (!content) return;
+  
+  content.innerHTML = `
     <div class="error-message">
       <div class="error-icon">❌</div>
       <h3>Error</h3>
