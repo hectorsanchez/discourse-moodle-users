@@ -37,14 +37,25 @@ after_initialize do
         wsfunction = 'core_user_get_users'
         criteria = 'criteria[0][key]=email&criteria[0][value]=%'
         format = 'moodlewsrestformat=json'
-        url = "#{moodle_url}?wstoken=#{token}&wsfunction=#{wsfunction}&#{criteria}&#{format}"
+        
+        # Construir la URL de manera más segura
+        uri = URI(moodle_url)
+        uri.query = URI.encode_www_form({
+          'wstoken' => token,
+          'wsfunction' => wsfunction,
+          'criteria[0][key]' => 'email',
+          'criteria[0][value]' => '%',
+          'moodlewsrestformat' => 'json'
+        })
+        url = uri.to_s
 
-        uri = URI(url)
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true if uri.scheme == 'https'
+        # Usar la URL construida
+        request_uri = URI(url)
+        http = Net::HTTP.new(request_uri.host, request_uri.port)
+        http.use_ssl = true if request_uri.scheme == 'https'
         http.read_timeout = 30
         
-        request = Net::HTTP::Get.new(uri)
+        request = Net::HTTP::Get.new(request_uri)
         response_http = http.request(request)
         
         unless response_http.code.to_i == 200
