@@ -128,14 +128,19 @@ function showMoodleUsersInterface() {
       position: relative;
       z-index: 1000;
       background: white;
-      min-height: 100vh;
+      min-height: calc(100vh - 64px);
       padding: 20px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .moodle-users-page {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .page-header {
@@ -443,10 +448,19 @@ function showMoodleUsersInterface() {
   // Insertar estilos CSS en el head
   document.head.appendChild(styleElement);
 
-  // Insertar después del main content
-  const mainContent = document.querySelector('.main-content') || document.querySelector('body');
-  if (mainContent) {
-    mainContent.appendChild(moodleInterface);
+  // Insertar dentro del contenedor principal de Discourse
+  const mainOutletWrapper = document.querySelector('#main-outlet-wrapper');
+  if (mainOutletWrapper) {
+    // Limpiar el contenido existente
+    mainOutletWrapper.innerHTML = '';
+    // Insertar nuestra interfaz
+    mainOutletWrapper.appendChild(moodleInterface);
+  } else {
+    // Fallback si no encuentra el contenedor principal
+    const mainContent = document.querySelector('.main-content') || document.querySelector('body');
+    if (mainContent) {
+      mainContent.appendChild(moodleInterface);
+    }
   }
 
   // Cargar usuarios automáticamente
