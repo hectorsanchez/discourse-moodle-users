@@ -46,9 +46,9 @@ function showMoodleUsersInterface() {
   }
 
   // Ocultar el contenido principal de Discourse
-  const mainOutlet = document.querySelector('#main-outlet');
-  if (mainOutlet) {
-    mainOutlet.style.display = 'none';
+  const existingMainOutlet = document.querySelector('#main-outlet');
+  if (existingMainOutlet) {
+    existingMainOutlet.style.display = 'none';
   }
 
   // Crear la interfaz
