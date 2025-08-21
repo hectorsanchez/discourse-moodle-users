@@ -455,6 +455,8 @@ function showMoodleUsersInterface() {
     mainOutlet.innerHTML = '';
     // Insertar nuestra interfaz
     mainOutlet.appendChild(moodleInterface);
+    // Mostrar el contenedor principal
+    mainOutlet.style.display = 'block';
   } else {
     // Fallback si no encuentra el contenedor principal
     const mainContent = document.querySelector('.main-content') || document.querySelector('body');
