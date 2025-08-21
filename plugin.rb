@@ -8,8 +8,14 @@ after_initialize do
   class ::MoodleUsersController < ::ApplicationController
     skip_before_action :verify_authenticity_token
     skip_before_action :check_xhr, only: [:users]
+    skip_before_action :preload_json, only: [:users]
+    skip_before_action :redirect_to_login_if_required, only: [:users]
     
     def users
+      # Establecer headers para respuesta JSON
+      response.headers['Content-Type'] = 'application/json'
+      response.headers['Access-Control-Allow-Origin'] = '*'
+      
       unless SiteSetting.dmu_enabled
         render json: { error: "El plugin de usuarios Moodle está deshabilitado." }, status: 403
         return
@@ -34,8 +40,24 @@ after_initialize do
         url = "#{moodle_url}?wstoken=#{token}&wsfunction=#{wsfunction}&#{criteria}&#{format}"
 
         uri = URI(url)
-        response = Net::HTTP.get(uri)
-        data = JSON.parse(response)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true if uri.scheme == 'https'
+        http.read_timeout = 30
+        
+        request = Net::HTTP::Get.new(uri)
+        response_http = http.request(request)
+        
+        unless response_http.code.to_i == 200
+          render json: { error: "Error HTTP #{response_http.code} al conectar con Moodle" }, status: 500
+          return
+        end
+        
+        data = JSON.parse(response_http.body)
+        
+        if data['exception']
+          render json: { error: "Error de Moodle: #{data['message']}" }, status: 500
+          return
+        end
         
         unless data['users']
           render json: { error: "No se pudieron obtener usuarios de Moodle", raw_response: data }, status: 500
@@ -48,7 +70,15 @@ after_initialize do
           arr.map { |u| { firstname: u['firstname'], lastname: u['lastname'], email: u['email'] } }
         end
 
-        render json: { users_by_country: result, total_users: users.length }
+        render json: { 
+          success: true,
+          users_by_country: result, 
+          total_users: users.length,
+          timestamp: Time.current.iso8601
+        }
+      rescue JSON::ParserError => e
+        Rails.logger.error "Error parsing Moodle API response: #{e.message}"
+        render json: { error: "Respuesta inválida de la API de Moodle" }, status: 500
       rescue => e
         Rails.logger.error "Error en Moodle API: #{e.message}"
         render json: { error: "Error al obtener usuarios: #{e.message}" }, status: 500
