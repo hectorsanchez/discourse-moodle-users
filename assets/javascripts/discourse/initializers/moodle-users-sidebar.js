@@ -52,9 +52,9 @@ function showMoodleUsersInterface() {
   }
 
   // Crear la interfaz
-  const interface = document.createElement('div');
-  interface.className = 'moodle-users-interface';
-  interface.innerHTML = `
+  const moodleInterface = document.createElement('div');
+  moodleInterface.className = 'moodle-users-interface';
+  moodleInterface.innerHTML = `
     <div class="moodle-users-page">
       <!-- Header con estadísticas -->
       <div class="page-header">
