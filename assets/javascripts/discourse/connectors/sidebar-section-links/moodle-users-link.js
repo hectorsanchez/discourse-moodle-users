@@ -1,6 +1,4 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
-import { computed } from "@ember/object";
-import { inject as service } from "@ember/service";
 
 export default {
   name: "moodle-users-sidebar-link",
