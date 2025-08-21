@@ -124,7 +124,7 @@ function showMoodleUsersInterface() {
   // Insertar después del main content
   const mainContent = document.querySelector('.main-content') || document.querySelector('body');
   if (mainContent) {
-    mainContent.appendChild(interface);
+    mainContent.appendChild(moodleInterface);
   }
 
   // Cargar usuarios automáticamente
