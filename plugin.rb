@@ -7,7 +7,6 @@ after_initialize do
   # Controlador simple sin Engine
   class ::MoodleUsersController < ::ApplicationController
     skip_before_action :verify_authenticity_token
-    skip_before_action :ensure_logged_in, only: [:users]
     skip_before_action :check_xhr, only: [:users]
     
     def users
