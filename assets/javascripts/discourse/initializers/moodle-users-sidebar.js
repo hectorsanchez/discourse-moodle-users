@@ -73,7 +73,7 @@ function showMoodleUsersInterface() {
           </div>
         </div>
         <div class="page-header-actions">
-          <button class="btn btn-primary" onclick="loadMoodleUsers()">
+          <button class="btn btn-primary" id="refreshButton">
             🔄 Actualizar
           </button>
         </div>
@@ -84,7 +84,7 @@ function showMoodleUsersInterface() {
         <div class="filters-row">
           <div class="filter-group">
             <label class="filter-label">Filtrar por país:</label>
-            <select class="filter-select" id="countryFilter" onchange="filterUsers()">
+            <select class="filter-select" id="countryFilter">
               <option value="all">Todos los países</option>
             </select>
           </div>
@@ -96,12 +96,11 @@ function showMoodleUsersInterface() {
               class="filter-input" 
               id="searchInput"
               placeholder="Nombre, apellido o email..."
-              oninput="filterUsers()"
             />
           </div>
           
           <div class="filter-group">
-            <button class="btn btn-secondary" onclick="clearFilters()">
+            <button class="btn btn-secondary" id="clearFiltersButton">
               🗑️ Limpiar filtros
             </button>
           </div>
@@ -394,6 +393,9 @@ function showMoodleUsersInterface() {
     }
   }
 
+  // Agregar event listeners para evitar CSP violations
+  addEventListeners();
+  
   // Cargar usuarios automáticamente
   loadMoodleUsers();
 }
@@ -549,4 +551,30 @@ function showError(message) {
       <p>${message}</p>
     </div>
   `;
+}
+
+function addEventListeners() {
+  // Botón de actualizar
+  const refreshButton = document.getElementById('refreshButton');
+  if (refreshButton) {
+    refreshButton.addEventListener('click', loadMoodleUsers);
+  }
+  
+  // Filtro de país
+  const countryFilter = document.getElementById('countryFilter');
+  if (countryFilter) {
+    countryFilter.addEventListener('change', filterUsers);
+  }
+  
+  // Campo de búsqueda
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', filterUsers);
+  }
+  
+  // Botón de limpiar filtros
+  const clearFiltersButton = document.getElementById('clearFiltersButton');
+  if (clearFiltersButton) {
+    clearFiltersButton.addEventListener('click', clearFilters);
+  }
 }
