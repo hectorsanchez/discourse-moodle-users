@@ -69,10 +69,7 @@ function showMoodleUsersInterface() {
               <span class="stat-number" id="totalCountries">-</span>
               <span class="stat-label">países</span>
             </span>
-            <span class="stat-item">
-              <span class="stat-label">Última actualización:</span>
-              <span class="stat-time" id="lastUpdate">-</span>
-            </span>
+
           </div>
         </div>
         <div class="page-header-actions">
@@ -121,15 +118,12 @@ function showMoodleUsersInterface() {
     </div>
   `;
 
-  // Agregar estilos CSS
+  // Agregar estilos CSS simplificados y nativos de Discourse
   const styleElement = document.createElement('style');
   styleElement.textContent = `
     .moodle-users-interface {
       position: relative;
       z-index: 1000;
-      background: white;
-      min-height: calc(100vh - 64px);
-      padding: 20px;
       width: 100%;
       box-sizing: border-box;
     }
@@ -138,9 +132,6 @@ function showMoodleUsersInterface() {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .page-header {
@@ -149,13 +140,12 @@ function showMoodleUsersInterface() {
       align-items: flex-start;
       margin-bottom: 30px;
       padding-bottom: 20px;
-      border-bottom: 2px solid #e9e9e9;
+      border-bottom: 1px solid var(--primary-low);
     }
 
     .page-title {
-      font-size: 2.5em;
-      font-weight: 700;
-      color: #333;
+      font-size: 2em;
+      font-weight: 600;
       margin: 0 0 15px 0;
     }
 
@@ -174,26 +164,20 @@ function showMoodleUsersInterface() {
 
     .stat-number {
       font-size: 1.5em;
-      font-weight: 700;
-      color: #0084ff;
+      font-weight: 600;
+      color: var(--primary);
     }
 
     .stat-label {
       font-size: 0.9em;
-      color: #666;
+      color: var(--primary-medium);
       margin-top: 5px;
     }
 
-    .stat-time {
-      font-size: 0.9em;
-      color: #666;
-      margin-left: 5px;
-    }
-
     .filters-section {
-      background: #f8f9fa;
+      background: var(--highlight-low);
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 4px;
       margin-bottom: 30px;
     }
 
@@ -212,36 +196,28 @@ function showMoodleUsersInterface() {
 
     .filter-label {
       font-weight: 600;
-      color: #333;
       font-size: 0.9em;
     }
 
     .filter-select,
     .filter-input {
-      padding: 10px 12px;
-      border: 1px solid #ddd;
+      padding: 8px 12px;
+      border: 1px solid var(--primary-low);
       border-radius: 4px;
       font-size: 14px;
       min-width: 200px;
     }
 
-    .filter-select:focus,
-    .filter-input:focus {
-      outline: none;
-      border-color: #0084ff;
-      box-shadow: 0 0 0 2px rgba(0, 132, 255, 0.2);
-    }
-
     .users-content {
       display: flex;
       flex-direction: column;
-      gap: 30px;
+      gap: 20px;
     }
 
     .country-section {
-      background: white;
-      border: 1px solid #e9e9e9;
-      border-radius: 8px;
+      background: var(--secondary);
+      border: 1px solid var(--primary-low);
+      border-radius: 4px;
       overflow: hidden;
     }
 
@@ -249,26 +225,22 @@ function showMoodleUsersInterface() {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e9e9e9;
+      padding: 15px 20px;
+      background: var(--highlight-low);
+      border-bottom: 1px solid var(--primary-low);
     }
 
     .country-name {
-      font-size: 1.3em;
+      font-size: 1.2em;
       font-weight: 600;
-      color: #333;
       margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
     .country-count {
-      background: #0084ff;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
+      background: var(--primary);
+      color: var(--secondary);
+      padding: 4px 10px;
+      border-radius: 12px;
       font-size: 0.9em;
       font-weight: 600;
     }
@@ -276,7 +248,7 @@ function showMoodleUsersInterface() {
     .users-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 15px;
+      gap: 10px;
       padding: 20px;
     }
 
@@ -285,16 +257,7 @@ function showMoodleUsersInterface() {
       align-items: center;
       gap: 15px;
       padding: 15px;
-      border: 1px solid #e9e9e9;
-      border-radius: 6px;
-      background: #fafafa;
-      transition: all 0.2s ease;
-    }
-
-    .user-card:hover {
-      background: white;
-      border-color: #0084ff;
-      box-shadow: 0 2px 8px rgba(0, 132, 255, 0.1);
+      background: var(--secondary);
     }
 
     .user-avatar {
@@ -308,13 +271,12 @@ function showMoodleUsersInterface() {
 
     .user-name {
       font-weight: 600;
-      color: #333;
       margin-bottom: 5px;
       font-size: 1.1em;
     }
 
     .user-email {
-      color: #666;
+      color: var(--primary-medium);
       font-size: 0.9em;
       word-break: break-all;
     }
@@ -322,7 +284,7 @@ function showMoodleUsersInterface() {
     .no-results {
       text-align: center;
       padding: 60px 20px;
-      color: #666;
+      color: var(--primary-medium);
     }
 
     .no-results-icon {
@@ -332,7 +294,6 @@ function showMoodleUsersInterface() {
 
     .no-results h3 {
       margin: 0 0 10px 0;
-      color: #333;
     }
 
     .no-results p {
@@ -340,42 +301,10 @@ function showMoodleUsersInterface() {
       font-size: 1.1em;
     }
 
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: #0084ff;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #0066cc;
-    }
-
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #545b62;
-    }
-
     .loading {
       text-align: center;
       padding: 60px 20px;
-      color: #666;
+      color: var(--primary-medium);
     }
 
     .loading-spinner {
@@ -392,7 +321,7 @@ function showMoodleUsersInterface() {
     .error-message {
       text-align: center;
       padding: 60px 20px;
-      color: #d33;
+      color: var(--danger);
     }
 
     .error-icon {
@@ -402,7 +331,7 @@ function showMoodleUsersInterface() {
 
     .error-message h3 {
       margin: 0 0 10px 0;
-      color: #d33;
+      color: var(--danger);
     }
 
     .error-message p {
@@ -414,8 +343,8 @@ function showMoodleUsersInterface() {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: #0084ff;
-      color: white;
+      background: var(--primary);
+      color: var(--secondary);
       display: flex;
       align-items: center;
       justify-content: center;
