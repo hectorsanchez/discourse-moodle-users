@@ -70,49 +70,49 @@ function showMoodleUsersInterface() {
   moodleInterface.innerHTML = `
     <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
       <!-- Header con estadísticas -->
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #e1e3e8;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--primary-low);">
         <div>
-          <h1 style="font-size: 2em; font-weight: 600; margin: 0 0 15px 0;">👥 Usuarios de Moodle</h1>
+          <h1 style="font-size: 2em; font-weight: 600; margin: 0 0 15px 0; color: var(--primary);">👥 Usuarios de Moodle</h1>
           <div style="display: flex; gap: 20px; flex-wrap: wrap;">
             <span style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-              <span id="totalUsers" style="font-size: 1.5em; font-weight: 600; color: #0d6efd;">-</span>
-              <span style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">usuarios</span>
+              <span id="totalUsers" style="font-size: 1.5em; font-weight: 600; color: var(--primary);">-</span>
+              <span style="font-size: 0.9em; color: var(--primary-medium); margin-top: 5px;">usuarios</span>
             </span>
             <span style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-              <span id="totalCountries" style="font-size: 1.5em; font-weight: 600; color: #0d6efd;">-</span>
-              <span style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">países</span>
+              <span id="totalCountries" style="font-size: 1.5em; font-weight: 600; color: var(--primary);">-</span>
+              <span style="font-size: 0.9em; color: var(--primary-medium); margin-top: 5px;">países</span>
             </span>
           </div>
         </div>
         <div>
-          <button id="refreshButton" style="background: #0d6efd; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+          <button id="refreshButton" style="background: var(--primary); color: var(--secondary); border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
             🔄 Actualizar
           </button>
         </div>
       </div>
 
       <!-- Filtros -->
-      <div style="background: #f8f9fa; padding: 20px; border-radius: 4px; margin-bottom: 30px;">
+      <div style="background: var(--highlight-low); padding: 20px; border-radius: 4px; margin-bottom: 30px;">
         <div style="display: flex; gap: 20px; align-items: end; flex-wrap: wrap;">
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label style="font-weight: 600; font-size: 0.9em;">Filtrar por país:</label>
-            <select id="countryFilter" style="padding: 8px 12px; border: 1px solid #e1e3e8; border-radius: 4px; font-size: 14px; min-width: 200px;">
+            <label style="font-weight: 600; font-size: 0.9em; color: var(--primary);">Filtrar por país:</label>
+            <select id="countryFilter" style="padding: 8px 12px; border: 1px solid var(--primary-low); border-radius: 4px; font-size: 14px; min-width: 200px; background: var(--secondary); color: var(--primary);">
               <option value="all">Todos los países</option>
             </select>
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label style="font-weight: 600; font-size: 0.9em;">Buscar usuario:</label>
+            <label style="font-weight: 600; font-size: 0.9em; color: var(--primary);">Buscar usuario:</label>
             <input 
               type="text" 
               id="searchInput"
               placeholder="Nombre, apellido o email..."
-              style="padding: 8px 12px; border: 1px solid #e1e3e8; border-radius: 4px; font-size: 14px; min-width: 200px;"
+              style="padding: 8px 12px; border: 1px solid var(--primary-low); border-radius: 4px; font-size: 14px; min-width: 200px; background: var(--secondary); color: var(--primary);"
             />
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <button id="clearFiltersButton" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+            <button id="clearFiltersButton" style="background: var(--primary-medium); color: var(--secondary); border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
               🗑️ Limpiar filtros
             </button>
           </div>
