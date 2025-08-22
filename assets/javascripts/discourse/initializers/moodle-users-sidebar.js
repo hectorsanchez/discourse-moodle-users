@@ -15,10 +15,22 @@ export default {
 
       // Manejar cambios de página
       api.onPageChange(url => {
+        console.log('Página cambiada a:', url);
+        
         if (url === '/moodle/users') {
           showMoodleUsersInterface();
         } else {
+          // Si no estamos en /moodle/users, asegurar que la interfaz esté oculta
           hideMoodleUsersInterface();
+          
+          // Verificar que el contenido principal esté visible
+          setTimeout(() => {
+            const mainOutlet = document.getElementById('main-outlet');
+            if (mainOutlet && mainOutlet.style.display === 'none') {
+              console.log('Forzando visibilidad del contenido principal');
+              mainOutlet.style.display = 'block';
+            }
+          }, 100);
         }
       });
     });
@@ -117,15 +129,30 @@ function showMoodleUsersInterface() {
 }
 
 function hideMoodleUsersInterface() {
-  const moodleInterface = document.querySelector('.moodle-users-interface');
-  const mainOutlet = document.getElementById('main-outlet');
-  
-  if (moodleInterface) {
-    moodleInterface.remove();
-  }
-  
-  if (mainOutlet) {
-    mainOutlet.style.display = 'block';
+  try {
+    // Ocultar la interfaz de Moodle si existe
+    const moodleInterface = document.querySelector('.moodle-users-interface');
+    if (moodleInterface && moodleInterface.parentNode) {
+      moodleInterface.remove();
+    }
+    
+    // Restaurar el contenido principal de Discourse
+    const mainOutlet = document.getElementById('main-outlet');
+    if (mainOutlet) {
+      mainOutlet.style.display = 'block';
+      // Forzar un refresh del contenido si es necesario
+      if (mainOutlet.children.length === 0) {
+        // Si el main-outlet está vacío, Discourse puede necesitar recargar
+        window.location.reload();
+      }
+    }
+  } catch (e) {
+    console.warn('Error al ocultar interfaz de Moodle:', e);
+    // En caso de error, asegurar que el contenido principal esté visible
+    const mainOutlet = document.getElementById('main-outlet');
+    if (mainOutlet) {
+      mainOutlet.style.display = 'block';
+    }
   }
 }
 
