@@ -2,6 +2,7 @@
 # about: Plugin para importar usuarios de Moodle y agruparlos por país.
 # version: 0.1
 # authors: Héctor Sanchez
+# stylesheets: moodle-users
 
 after_initialize do
   # Controlador simple sin Engine

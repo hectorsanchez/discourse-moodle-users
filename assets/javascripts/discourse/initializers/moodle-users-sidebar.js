@@ -44,9 +44,13 @@ export default {
       });
 
       // Agregar listener para navegación del navegador
-      window.addEventListener('popstate', () => {
-        if (window.location.pathname !== "/moodle/users") {
-          hideMoodleUsersInterface();
+      window.addEventListener('popstate', (event) => {
+        try {
+          if (window.location.pathname !== "/moodle/users") {
+            hideMoodleUsersInterface();
+          }
+        } catch (e) {
+          console.warn('Error en popstate:', e);
         }
       });
 
@@ -171,16 +175,20 @@ function showMoodleUsersInterface() {
 }
 
 function hideMoodleUsersInterface() {
-  // Ocultar la interfaz de Moodle si existe
-  const moodleInterface = document.querySelector('.moodle-users-interface');
-  if (moodleInterface) {
-    moodleInterface.remove();
-  }
-  
-  // Mostrar el contenido principal de Discourse
-  const mainOutlet = document.querySelector('#main-outlet');
-  if (mainOutlet) {
-    mainOutlet.style.display = 'block';
+  try {
+    // Ocultar la interfaz de Moodle si existe
+    const moodleInterface = document.querySelector('.moodle-users-interface');
+    if (moodleInterface && moodleInterface.parentNode) {
+      moodleInterface.remove();
+    }
+    
+    // Mostrar el contenido principal de Discourse
+    const mainOutlet = document.querySelector('#main-outlet');
+    if (mainOutlet) {
+      mainOutlet.style.display = 'block';
+    }
+  } catch (e) {
+    console.warn('Error al ocultar interfaz de Moodle:', e);
   }
 }
 
