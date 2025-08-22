@@ -13,6 +13,10 @@ export default {
         icon: "users"
       });
 
+      // Debug: verificar si I18n está disponible
+      console.log('I18n disponible:', typeof I18n !== 'undefined');
+      console.log('I18n.t disponible:', typeof I18n !== 'undefined' && typeof I18n.t === 'function');
+      
       // Interceptar el click en el enlace
       api.onPageChange(() => {
         const moodleLink = document.querySelector('a[data-link-name="moodle-users"]');
@@ -38,6 +42,21 @@ export default {
           hideMoodleUsersInterface();
         }
       });
+
+      // Agregar listener para navegación del navegador
+      window.addEventListener('popstate', () => {
+        if (window.location.pathname !== "/moodle/users") {
+          hideMoodleUsersInterface();
+        }
+      });
+
+      // Intentar aplicar traducciones cuando I18n esté disponible
+      if (typeof I18n !== 'undefined' && typeof I18n.t === 'function') {
+        applyTranslations();
+      } else {
+        // Si I18n no está disponible, esperar y reintentar
+        setTimeout(applyTranslations, 500);
+      }
     });
   }
 };
@@ -57,27 +76,28 @@ function showMoodleUsersInterface() {
   // Crear la interfaz
   const moodleInterface = document.createElement('div');
   moodleInterface.className = 'moodle-users-interface';
+  // Crear el HTML base sin traducciones
   moodleInterface.innerHTML = `
     <div class="moodle-users-page">
       <!-- Header con estadísticas -->
       <div class="page-header">
         <div class="page-header-content">
-          <h1 class="page-title">${I18n.t('js.moodle_users.page_title')}</h1>
+          <h1 class="page-title" data-i18n="js.moodle_users.page_title">👥 Usuarios de Moodle</h1>
           <div class="page-header-stats">
             <span class="stat-item">
               <span class="stat-number" id="totalUsers">-</span>
-              <span class="stat-label">${I18n.t('js.moodle_users.users')}</span>
+              <span class="stat-label" data-i18n="js.moodle_users.users">usuarios</span>
             </span>
             <span class="stat-item">
               <span class="stat-number" id="totalCountries">-</span>
-              <span class="stat-label">${I18n.t('js.moodle_users.countries')}</span>
+              <span class="stat-label" data-i18n="js.moodle_users.countries">países</span>
             </span>
 
           </div>
         </div>
         <div class="page-header-actions">
-          <button class="btn btn-primary" id="refreshButton">
-            ${I18n.t('js.moodle_users.update_button')}
+          <button class="btn btn-primary" id="refreshButton" data-i18n="js.moodle_users.update_button">
+            🔄 Actualizar
           </button>
         </div>
       </div>
@@ -86,25 +106,26 @@ function showMoodleUsersInterface() {
       <div class="filters-section">
         <div class="filters-row">
           <div class="filter-group">
-            <label class="filter-label">${I18n.t('js.moodle_users.filter_by_country')}</label>
+            <label class="filter-label" data-i18n="js.moodle_users.filter_by_country">Filtrar por país:</label>
             <select class="filter-select" id="countryFilter">
-              <option value="all">${I18n.t('js.moodle_users.all_countries')}</option>
+              <option value="all" data-i18n="js.moodle_users.all_countries">Todos los países</option>
             </select>
           </div>
           
           <div class="filter-group">
-            <label class="filter-label">${I18n.t('js.moodle_users.search_user')}</label>
+            <label class="filter-label" data-i18n="js.moodle_users.search_user">Buscar usuario:</label>
             <input 
               type="text" 
               class="filter-input" 
               id="searchInput"
-              placeholder="${I18n.t('js.moodle_users.search_placeholder')}"
+              placeholder="Nombre, apellido o email..."
+              data-i18n-placeholder="js.moodle_users.search_placeholder"
             />
           </div>
           
           <div class="filter-group">
-            <button class="btn btn-secondary" id="clearFiltersButton">
-              ${I18n.t('js.moodle_users.clear_filters')}
+            <button class="btn btn-secondary" id="clearFiltersButton" data-i18n="js.moodle_users.clear_filters">
+              🗑️ Limpiar filtros
             </button>
           </div>
         </div>
@@ -114,11 +135,14 @@ function showMoodleUsersInterface() {
       <div class="users-content" id="usersContent">
         <div class="loading">
           <div class="loading-spinner">⏳</div>
-          <p>${I18n.t('js.moodle_users.loading')}</p>
+          <p data-i18n="js.moodle_users.loading">Cargando usuarios de Moodle...</p>
         </div>
       </div>
     </div>
   `;
+
+  // Aplicar traducciones después de crear el HTML
+  applyTranslations();
 
   // Los estilos CSS ahora están en assets/stylesheets/moodle-users.scss
 
@@ -157,6 +181,41 @@ function hideMoodleUsersInterface() {
   const mainOutlet = document.querySelector('#main-outlet');
   if (mainOutlet) {
     mainOutlet.style.display = 'block';
+  }
+}
+
+// Función para aplicar traducciones cuando I18n esté disponible
+function applyTranslations() {
+  try {
+    if (typeof I18n === 'undefined' || typeof I18n.t !== 'function') {
+      console.log('I18n no disponible aún, reintentando en 100ms...');
+      setTimeout(applyTranslations, 100);
+      return;
+    }
+
+    console.log('Aplicando traducciones con I18n...');
+    
+    // Aplicar traducciones a elementos con data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+      const key = element.getAttribute('data-i18n');
+      const translation = I18n.t(key);
+      if (translation && translation !== key) {
+        element.textContent = translation;
+      }
+    });
+
+    // Aplicar traducciones a placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+      const key = element.getAttribute('data-i18n-placeholder');
+      const translation = I18n.t(key);
+      if (translation && translation !== key) {
+        element.placeholder = translation;
+      }
+    });
+
+    console.log('Traducciones aplicadas exitosamente');
+  } catch (e) {
+    console.warn('Error al aplicar traducciones:', e);
   }
 }
 
@@ -203,7 +262,7 @@ function populateCountryFilter() {
   allCountries.forEach(country => {
     const option = document.createElement('option');
     option.value = country;
-    option.textContent = country === 'Sin país' ? I18n.t('js.moodle_users.no_country_specified') : country;
+    option.textContent = country === 'Sin país' ? '🌍 Sin país especificado' : country;
     select.appendChild(option);
   });
 }
@@ -244,8 +303,8 @@ function displayUsers(users) {
     content.innerHTML = `
       <div class="no-results">
         <div class="no-results-icon">🔍</div>
-        <h3>${I18n.t('js.moodle_users.no_results_title')}</h3>
-        <p>${I18n.t('js.moodle_users.no_results_message')}</p>
+        <h3>No se encontraron usuarios</h3>
+        <p>Intenta ajustar los filtros o busca con otros términos.</p>
       </div>
     `;
     return;
@@ -255,7 +314,7 @@ function displayUsers(users) {
   
   Object.keys(users).forEach(country => {
     const countryUsers = users[country];
-    const countryDisplay = country === 'Sin país' ? I18n.t('js.moodle_users.no_country_specified') : country;
+    const countryDisplay = country === 'Sin país' ? '🌍 Sin país especificado' : country;
     
     html += `
       <div class="country-section">
@@ -307,7 +366,7 @@ function showError(message) {
   content.innerHTML = `
     <div class="error-message">
       <div class="error-icon">❌</div>
-      <h3>${I18n.t('js.moodle_users.error_title')}</h3>
+      <h3>Error</h3>
       <p>${message}</p>
     </div>
   `;
