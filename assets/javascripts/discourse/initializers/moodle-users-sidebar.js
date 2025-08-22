@@ -4,63 +4,23 @@ export default {
   name: "moodle-users-sidebar",
   initialize() {
     withPluginApi("0.8.31", api => {
-      // Agregar enlace al sidebar usando la API correcta de Discourse
+      // Agregar enlace al sidebar
       api.addCommunitySectionLink({
         name: "moodle-users",
-        route: "discovery.latest", // Ruta temporal, la interceptaremos
+        route: "discovery.latest",
         title: "Ver usuarios de Moodle importados del campus",
         text: "Moodle Users",
         icon: "users"
       });
 
-      // Debug: verificar si I18n está disponible
-      console.log('I18n disponible:', typeof I18n !== 'undefined');
-      console.log('I18n.t disponible:', typeof I18n !== 'undefined' && typeof I18n.t === 'function');
-      
-      // Interceptar el click en el enlace
-      api.onPageChange(() => {
-        const moodleLink = document.querySelector('a[data-link-name="moodle-users"]');
-        if (moodleLink && !moodleLink.hasAttribute('data-intercepted')) {
-          moodleLink.setAttribute('data-intercepted', 'true');
-          moodleLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Navegar a /moodle/users programáticamente
-            window.history.pushState({}, '', '/moodle/users');
-            
-            // Mostrar la interfaz de usuarios de Moodle
-            showMoodleUsersInterface();
-          });
-        }
-        
-        // Detectar si estamos en /moodle/users
-        if (window.location.pathname === "/moodle/users") {
+      // Manejar cambios de página
+      api.onPageChange(url => {
+        if (url === '/moodle/users') {
           showMoodleUsersInterface();
         } else {
-          // Si no estamos en /moodle/users, ocultar la interfaz
           hideMoodleUsersInterface();
         }
       });
-
-      // Agregar listener para navegación del navegador
-      window.addEventListener('popstate', (event) => {
-        try {
-          if (window.location.pathname !== "/moodle/users") {
-            hideMoodleUsersInterface();
-          }
-        } catch (e) {
-          console.warn('Error en popstate:', e);
-        }
-      });
-
-      // Intentar aplicar traducciones cuando I18n esté disponible
-      if (typeof I18n !== 'undefined' && typeof I18n.t === 'function') {
-        applyTranslations();
-      } else {
-        // Si I18n no está disponible, esperar y reintentar
-        setTimeout(applyTranslations, 500);
-      }
     });
   }
 };
@@ -72,63 +32,61 @@ function showMoodleUsersInterface() {
   }
 
   // Ocultar el contenido principal de Discourse
-  const existingMainOutlet = document.querySelector('#main-outlet');
-  if (existingMainOutlet) {
-    existingMainOutlet.style.display = 'none';
+  const mainOutlet = document.getElementById('main-outlet');
+  if (mainOutlet) {
+    mainOutlet.style.display = 'none';
   }
 
-  // Crear la interfaz
+  // Crear la interfaz con CSS inline
   const moodleInterface = document.createElement('div');
   moodleInterface.className = 'moodle-users-interface';
-  // Crear el HTML base sin traducciones
+  
   moodleInterface.innerHTML = `
-    <div class="moodle-users-page">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
       <!-- Header con estadísticas -->
-      <div class="page-header">
-        <div class="page-header-content">
-          <h1 class="page-title" data-i18n="js.moodle_users.page_title">👥 Usuarios de Moodle</h1>
-          <div class="page-header-stats">
-            <span class="stat-item">
-              <span class="stat-number" id="totalUsers">-</span>
-              <span class="stat-label" data-i18n="js.moodle_users.users">usuarios</span>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #e1e3e8;">
+        <div>
+          <h1 style="font-size: 2em; font-weight: 600; margin: 0 0 15px 0;">👥 Usuarios de Moodle</h1>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <span style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+              <span id="totalUsers" style="font-size: 1.5em; font-weight: 600; color: #0d6efd;">-</span>
+              <span style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">usuarios</span>
             </span>
-            <span class="stat-item">
-              <span class="stat-number" id="totalCountries">-</span>
-              <span class="stat-label" data-i18n="js.moodle_users.countries">países</span>
+            <span style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+              <span id="totalCountries" style="font-size: 1.5em; font-weight: 600; color: #0d6efd;">-</span>
+              <span style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">países</span>
             </span>
-
           </div>
         </div>
-        <div class="page-header-actions">
-          <button class="btn btn-primary" id="refreshButton" data-i18n="js.moodle_users.update_button">
+        <div>
+          <button id="refreshButton" style="background: #0d6efd; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
             🔄 Actualizar
           </button>
         </div>
       </div>
 
       <!-- Filtros -->
-      <div class="filters-section">
-        <div class="filters-row">
-          <div class="filter-group">
-            <label class="filter-label" data-i18n="js.moodle_users.filter_by_country">Filtrar por país:</label>
-            <select class="filter-select" id="countryFilter">
-              <option value="all" data-i18n="js.moodle_users.all_countries">Todos los países</option>
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 4px; margin-bottom: 30px;">
+        <div style="display: flex; gap: 20px; align-items: end; flex-wrap: wrap;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; font-size: 0.9em;">Filtrar por país:</label>
+            <select id="countryFilter" style="padding: 8px 12px; border: 1px solid #e1e3e8; border-radius: 4px; font-size: 14px; min-width: 200px;">
+              <option value="all">Todos los países</option>
             </select>
           </div>
           
-          <div class="filter-group">
-            <label class="filter-label" data-i18n="js.moodle_users.search_user">Buscar usuario:</label>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; font-size: 0.9em;">Buscar usuario:</label>
             <input 
               type="text" 
-              class="filter-input" 
               id="searchInput"
               placeholder="Nombre, apellido o email..."
-              data-i18n-placeholder="js.moodle_users.search_placeholder"
+              style="padding: 8px 12px; border: 1px solid #e1e3e8; border-radius: 4px; font-size: 14px; min-width: 200px;"
             />
           </div>
           
-          <div class="filter-group">
-            <button class="btn btn-secondary" id="clearFiltersButton" data-i18n="js.moodle_users.clear_filters">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button id="clearFiltersButton" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
               🗑️ Limpiar filtros
             </button>
           </div>
@@ -136,94 +94,38 @@ function showMoodleUsersInterface() {
       </div>
 
       <!-- Lista de usuarios -->
-      <div class="users-content" id="usersContent">
-        <div class="loading">
-          <div class="loading-spinner">⏳</div>
-          <p data-i18n="js.moodle_users.loading">Cargando usuarios de Moodle...</p>
+      <div id="usersContent" style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+          <div style="font-size: 3em; margin-bottom: 20px;">⏳</div>
+          <p>Cargando usuarios de Moodle...</p>
         </div>
       </div>
     </div>
   `;
 
-  // Aplicar traducciones después de crear el HTML
-  applyTranslations();
-
-  // Los estilos CSS ahora están en assets/stylesheets/moodle-users.scss
-
-  // Insertar dentro del contenedor principal de contenido de Discourse
-  const mainOutlet = document.querySelector('#main-outlet');
-  if (mainOutlet) {
-    // Limpiar solo el contenido del área principal, no el sidebar
-    mainOutlet.innerHTML = '';
-    // Insertar nuestra interfaz
-    mainOutlet.appendChild(moodleInterface);
-    // Mostrar el contenedor principal
-    mainOutlet.style.display = 'block';
-  } else {
-    // Fallback si no encuentra el contenedor principal
-    const mainContent = document.querySelector('.main-content') || document.querySelector('body');
-    if (mainContent) {
-      mainContent.appendChild(moodleInterface);
-    }
+  // Insertar en el contenedor principal
+  const mainOutletWrapper = document.getElementById('main-outlet-wrapper');
+  if (mainOutletWrapper) {
+    mainOutletWrapper.appendChild(moodleInterface);
   }
 
-  // Agregar event listeners para evitar CSP violations
-  addEventListeners();
-  
-  // Cargar usuarios automáticamente
+  // Cargar usuarios
   loadMoodleUsers();
+
+  // Agregar event listeners
+  addEventListeners();
 }
 
 function hideMoodleUsersInterface() {
-  try {
-    // Ocultar la interfaz de Moodle si existe
-    const moodleInterface = document.querySelector('.moodle-users-interface');
-    if (moodleInterface && moodleInterface.parentNode) {
-      moodleInterface.remove();
-    }
-    
-    // Mostrar el contenido principal de Discourse
-    const mainOutlet = document.querySelector('#main-outlet');
-    if (mainOutlet) {
-      mainOutlet.style.display = 'block';
-    }
-  } catch (e) {
-    console.warn('Error al ocultar interfaz de Moodle:', e);
+  const moodleInterface = document.querySelector('.moodle-users-interface');
+  const mainOutlet = document.getElementById('main-outlet');
+  
+  if (moodleInterface) {
+    moodleInterface.remove();
   }
-}
-
-// Función para aplicar traducciones cuando I18n esté disponible
-function applyTranslations() {
-  try {
-    if (typeof I18n === 'undefined' || typeof I18n.t !== 'function') {
-      console.log('I18n no disponible aún, reintentando en 100ms...');
-      setTimeout(applyTranslations, 100);
-      return;
-    }
-
-    console.log('Aplicando traducciones con I18n...');
-    
-    // Aplicar traducciones a elementos con data-i18n
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-      const key = element.getAttribute('data-i18n');
-      const translation = I18n.t(key);
-      if (translation && translation !== key) {
-        element.textContent = translation;
-      }
-    });
-
-    // Aplicar traducciones a placeholders
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-      const key = element.getAttribute('data-i18n-placeholder');
-      const translation = I18n.t(key);
-      if (translation && translation !== key) {
-        element.placeholder = translation;
-      }
-    });
-
-    console.log('Traducciones aplicadas exitosamente');
-  } catch (e) {
-    console.warn('Error al aplicar traducciones:', e);
+  
+  if (mainOutlet) {
+    mainOutlet.style.display = 'block';
   }
 }
 
@@ -254,11 +156,9 @@ async function loadMoodleUsers() {
 function updateStats(data) {
   const totalElement = document.getElementById('totalUsers');
   const countriesElement = document.getElementById('totalCountries');
-  const updateElement = document.getElementById('lastUpdate');
   
   if (totalElement) totalElement.textContent = data.total_users;
   if (countriesElement) countriesElement.textContent = allCountries.length;
-  if (updateElement) updateElement.textContent = new Date(data.timestamp).toLocaleString();
 }
 
 function populateCountryFilter() {
@@ -309,10 +209,10 @@ function displayUsers(users) {
   
   if (Object.keys(users).length === 0) {
     content.innerHTML = `
-      <div class="no-results">
-        <div class="no-results-icon">🔍</div>
-        <h3>No se encontraron usuarios</h3>
-        <p>Intenta ajustar los filtros o busca con otros términos.</p>
+      <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+        <div style="font-size: 4em; margin-bottom: 20px;">🔍</div>
+        <h3 style="margin: 0 0 10px 0;">No se encontraron usuarios</h3>
+        <p style="margin: 0; font-size: 1.1em;">Intenta ajustar los filtros o busca con otros términos.</p>
       </div>
     `;
     return;
@@ -325,21 +225,23 @@ function displayUsers(users) {
     const countryDisplay = country === 'Sin país' ? '🌍 Sin país especificado' : country;
     
     html += `
-      <div class="country-section">
-        <div class="country-header">
-          <h3 class="country-name">${countryDisplay}</h3>
-          <span class="country-count">${countryUsers.length} usuarios</span>
+      <div style="background: white; border: 1px solid #e1e3e8; border-radius: 4px; overflow: hidden;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid #e1e3e8;">
+          <h3 style="font-size: 1.2em; font-weight: 600; margin: 0;">${countryDisplay}</h3>
+          <span style="background: #0d6efd; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.9em; font-weight: 600;">${countryUsers.length} usuarios</span>
         </div>
         
-        <div class="users-grid">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; padding: 20px;">
           ${countryUsers.map(user => `
-            <div class="user-card">
-              <div class="user-avatar">
-                <div class="avatar-placeholder">${getInitials(user.firstname, user.lastname)}</div>
+            <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: white;">
+              <div style="flex-shrink: 0;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: #0d6efd; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.2em;">
+                  ${getInitials(user.firstname, user.lastname)}
+                </div>
               </div>
-              <div class="user-info">
-                <div class="user-name">${user.firstname} ${user.lastname}</div>
-                <div class="user-email">${user.email}</div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-weight: 600; margin-bottom: 5px; font-size: 1.1em;">${user.firstname} ${user.lastname}</div>
+                <div style="color: #6c757d; font-size: 0.9em; word-break: break-all;">${user.email}</div>
               </div>
             </div>
           `).join('')}
@@ -372,10 +274,10 @@ function showError(message) {
   if (!content) return;
   
   content.innerHTML = `
-    <div class="error-message">
-      <div class="error-icon">❌</div>
-      <h3>Error</h3>
-      <p>${message}</p>
+    <div style="text-align: center; padding: 60px 20px; color: #dc3545;">
+      <div style="font-size: 4em; margin-bottom: 20px;">❌</div>
+      <h3 style="margin: 0 0 10px 0; color: #dc3545;">Error</h3>
+      <p style="margin: 0; font-size: 1.1em;">${message}</p>
     </div>
   `;
 }
