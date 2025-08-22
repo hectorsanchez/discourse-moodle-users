@@ -1,0 +1,19 @@
+en:
+  js:
+    moodle_users:
+      title: "👥 Moodle Users"
+      page_title: "👥 Moodle Users"
+      users: "users"
+      countries: "countries"
+      filter_by_country: "Filter by country:"
+      search_user: "Search user:"
+      search_placeholder: "Name, last name or email..."
+      all_countries: "All countries"
+      clear_filters: "🗑️ Clear filters"
+      refresh: "🔄 Refresh"
+      loading: "Loading Moodle users..."
+      no_results_title: "No users found"
+      no_results_message: "Try adjusting the filters or search with other terms."
+      error_title: "Error"
+      no_country_specified: "🌍 No country specified"
+      update_button: "🔄 Update"
