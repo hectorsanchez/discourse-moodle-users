@@ -7,41 +7,17 @@ export default {
       // Agregar enlace al sidebar
       api.addCommunitySectionLink({
         name: "moodle-users",
-        route: "discovery.latest",
+        route: "/moodle/users",
         title: "Ver usuarios de Moodle importados del campus",
         text: "Moodle Users",
         icon: "users"
       });
 
-      // Interceptar el click en el enlace del sidebar
-      api.onPageChange(() => {
-        const moodleLink = document.querySelector('a[data-link-name="moodle-users"]');
-        if (moodleLink && !moodleLink.hasAttribute('data-intercepted')) {
-          moodleLink.setAttribute('data-intercepted', 'true');
-          moodleLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Navegar a /moodle/users programáticamente
-            window.history.pushState({}, '', '/moodle/users');
-            
-            // Mostrar la interfaz de usuarios de Moodle
-            showMoodleUsersInterface();
-          });
-        }
-        
-        // Detectar si estamos en /moodle/users
-        if (window.location.pathname === "/moodle/users") {
+      // Manejar cambios de página
+      api.onPageChange(url => {
+        if (url === '/moodle/users') {
           showMoodleUsersInterface();
         } else {
-          // Si no estamos en /moodle/users, ocultar la interfaz
-          hideMoodleUsersInterface();
-        }
-      });
-
-      // Agregar listener para navegación del navegador
-      window.addEventListener('popstate', () => {
-        if (window.location.pathname !== "/moodle/users") {
           hideMoodleUsersInterface();
         }
       });
