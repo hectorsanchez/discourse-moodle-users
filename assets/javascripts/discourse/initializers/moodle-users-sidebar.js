@@ -121,7 +121,7 @@ function showMoodleUsersInterface() {
 
       <!-- Lista de usuarios -->
       <div id="usersContent" style="display: flex; flex-direction: column; gap: 20px;">
-        <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+        <div style="text-align: center; padding: 60px 20px; color: var(--primary-medium);">
           <div style="font-size: 3em; margin-bottom: 20px;">⏳</div>
           <p>Cargando usuarios de Moodle...</p>
         </div>
@@ -250,9 +250,9 @@ function displayUsers(users) {
   
   if (Object.keys(users).length === 0) {
     content.innerHTML = `
-      <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+      <div style="text-align: center; padding: 60px 20px; color: var(--primary-medium);">
         <div style="font-size: 4em; margin-bottom: 20px;">🔍</div>
-        <h3 style="margin: 0 0 10px 0;">No se encontraron usuarios</h3>
+        <h3 style="margin: 0 0 10px 0; color: var(--primary);">No se encontraron usuarios</h3>
         <p style="margin: 0; font-size: 1.1em;">Intenta ajustar los filtros o busca con otros términos.</p>
       </div>
     `;
@@ -266,23 +266,23 @@ function displayUsers(users) {
     const countryDisplay = country === 'Sin país' ? '🌍 Sin país especificado' : country;
     
     html += `
-      <div style="background: white; border: 1px solid #e1e3e8; border-radius: 4px; overflow: hidden;">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid #e1e3e8;">
-          <h3 style="font-size: 1.2em; font-weight: 600; margin: 0;">${countryDisplay}</h3>
-          <span style="background: #0d6efd; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.9em; font-weight: 600;">${countryUsers.length} usuarios</span>
+      <div style="background: var(--secondary); border: 1px solid var(--primary-low); border-radius: 4px; overflow: hidden;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--highlight-low); border-bottom: 1px solid var(--primary-low);">
+          <h3 style="font-size: 1.2em; font-weight: 600; margin: 0; color: var(--primary);">${countryDisplay}</h3>
+          <span style="background: var(--primary); color: var(--secondary); padding: 4px 10px; border-radius: 12px; font-size: 0.9em; font-weight: 600;">${countryUsers.length} usuarios</span>
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; padding: 20px;">
           ${countryUsers.map(user => `
-            <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: white;">
+            <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--secondary); border: 1px solid var(--primary-low); border-radius: 4px;">
               <div style="flex-shrink: 0;">
-                <div style="width: 48px; height: 48px; border-radius: 50%; background: #0d6efd; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.2em;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: var(--secondary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.2em;">
                   ${getInitials(user.firstname, user.lastname)}
                 </div>
               </div>
               <div style="flex: 1; min-width: 0;">
-                <div style="font-weight: 600; margin-bottom: 5px; font-size: 1.1em;">${user.firstname} ${user.lastname}</div>
-                <div style="color: #6c757d; font-size: 0.9em; word-break: break-all;">${user.email}</div>
+                <div style="font-weight: 600; margin-bottom: 5px; font-size: 1.1em; color: var(--primary);">${user.firstname} ${user.lastname}</div>
+                <div style="color: var(--primary-medium); font-size: 0.9em; word-break: break-all;">${user.email}</div>
               </div>
             </div>
           `).join('')}
@@ -315,9 +315,9 @@ function showError(message) {
   if (!content) return;
   
   content.innerHTML = `
-    <div style="text-align: center; padding: 60px 20px; color: #dc3545;">
+    <div style="text-align: center; padding: 60px 20px; color: var(--danger);">
       <div style="font-size: 4em; margin-bottom: 20px;">❌</div>
-      <h3 style="margin: 0 0 10px 0; color: #dc3545;">Error</h3>
+      <h3 style="margin: 0 0 10px 0; color: var(--danger);">Error</h3>
       <p style="margin: 0; font-size: 1.1em;">${message}</p>
     </div>
   `;
