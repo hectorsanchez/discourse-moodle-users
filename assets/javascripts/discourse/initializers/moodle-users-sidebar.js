@@ -5,13 +5,13 @@ export default {
   initialize() {
     withPluginApi("0.8.31", api => {
       // Agregar enlace al sidebar
-      api.addCommunitySectionLink({
-        name: "moodle-users",
-        route: "discovery.latest",
-        title: "Ver usuarios de Moodle importados del campus",
-        text: "Moodle Users",
-        icon: "users"
-      });
+      //api.addCommunitySectionLink({
+      //  name: "moodle-users",
+      //  route: "discovery.latest",
+      //  title: "Ver usuarios de Moodle importados del campus",
+      //  text: "Moodle Users",
+      //  icon: "users"
+      //});
 
       // Interceptar el click en el enlace del sidebar
       api.onPageChange(() => {
